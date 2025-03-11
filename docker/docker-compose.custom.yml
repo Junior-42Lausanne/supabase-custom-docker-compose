@@ -1,0 +1,92 @@
+###
+# Simplified supabase instance
+#
+# extending used services
+#
+# without
+# - realtime
+# - vector
+# - analytics
+# - functions
+
+volumes:
+  db-config:
+
+services:
+  ### Mock services (for depends_on) ###
+  analytics: &empty_service
+    image: busybox
+    command: sleep 1
+  vector:
+      <<: *empty_service
+
+  ### Core ###
+
+  kong:
+    extends:
+      file: docker-compose.yml
+      service: kong
+    depends_on: &disable_depends_on_analytics
+      analytics:
+        condition: service_healthy
+        required: false
+
+  auth:
+    extends:
+      file: docker-compose.yml
+      service: auth
+    depends_on:
+      <<: *disable_depends_on_analytics
+
+  rest:
+    extends:
+      file: docker-compose.yml
+      service: rest
+    depends_on:
+      <<: *disable_depends_on_analytics
+
+  ### DB ###
+
+  db:
+    extends:
+      file: docker-compose.yml
+      service: db
+    depends_on:
+      vector:
+        condition: service_healthy
+        required: false
+
+  meta:
+    extends:
+      file: docker-compose.yml
+      service: meta
+    depends_on:
+      <<: *disable_depends_on_analytics
+
+  supavisor:
+    extends:
+      file: docker-compose.yml
+      service: supavisor
+    depends_on:
+      <<: *disable_depends_on_analytics
+
+  ### Storage ###
+
+  storage: # To use S3 backed storage: docker compose -f docker-compose.yml -f docker-compose.s3.yml up
+    extends:
+      file: docker-compose.yml
+      service: storage
+
+  imgproxy:
+    extends:
+      file: docker-compose.yml
+      service: imgproxy
+
+  ### Utils ###
+
+  studio: # can be disabled for production
+    extends:
+      file: docker-compose.yml
+      service: studio
+    depends_on:
+      <<: *disable_depends_on_analytics
