@@ -1,0 +1,24 @@
+services:
+  traefik:
+    image: "traefik:v3.3.4"
+    restart: "always"
+    container_name: "traefik"
+    labels:
+      - "com.centurylinklabs.watchtower.stop-signal=SIGHUP"
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.acme_http_resolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.acme_http_resolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.acme_http_resolver.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.acme_http_resolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./volumes/traefik/letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
