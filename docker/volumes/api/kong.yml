@@ -134,6 +134,7 @@ services:
   ## Secure Realtime routes
   - name: realtime-v1-ws
     _comment: 'Realtime: /realtime/v1/* -> ws://realtime:4000/socket/*'
+    enabled: false
     url: http://realtime-dev.supabase-realtime:4000/socket
     protocol: ws
     routes:
@@ -154,6 +155,7 @@ services:
             - anon
   - name: realtime-v1-rest
     _comment: 'Realtime: /realtime/v1/* -> ws://realtime:4000/socket/*'
+    enabled: false
     url: http://realtime-dev.supabase-realtime:4000/api
     protocol: http
     routes:
@@ -187,6 +189,7 @@ services:
   ## Edge Functions routes
   - name: functions-v1
     _comment: 'Edge Functions: /functions/v1/* -> http://functions:9000/*'
+    enabled: false
     url: http://functions:9000/
     routes:
       - name: functions-v1-all
@@ -199,6 +202,7 @@ services:
   ## Analytics routes
   - name: analytics-v1
     _comment: 'Analytics: /analytics/v1/* -> http://logflare:4000/*'
+    enabled: false
     url: http://analytics:4000/
     routes:
       - name: analytics-v1-all
