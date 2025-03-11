@@ -20,6 +20,14 @@ services:
   vector:
       <<: *empty_service
 
+
+  ### Reverse proxy ###
+
+  traefik:
+    extends:
+      file: docker-compose.traefik.yml
+      service: traefik
+
   ### Core ###
 
   kong:
@@ -30,6 +38,11 @@ services:
       analytics:
         condition: service_healthy
         required: false
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.supabase-kong.rule=Host(`${EXTERNAL_HOSTNAME}`)"
+      - "traefik.http.routers.supabase-kong.entrypoints=websecure"
+      - "traefik.http.routers.supabase-kong.tls.certresolver=acme_http_resolver"
 
   auth:
     extends:
