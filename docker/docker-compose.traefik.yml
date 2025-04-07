@@ -16,6 +16,11 @@ services:
       - "--certificatesresolvers.acme_http_resolver.acme.httpchallenge.entrypoint=web"
       - "--certificatesresolvers.acme_http_resolver.acme.email=${ACME_EMAIL}"
       - "--certificatesresolvers.acme_http_resolver.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.ik_resolver.acme.dnschallenge.provider=infomaniak"
+      - "--certificatesresolvers.ik_resolver.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.ik_resolver.acme.storage=/letsencrypt/ik-acme.json"
+    environment:
+      INFOMANIAK_ACCESS_TOKEN: ${INFOMANIAK_DOMAIN_ACCESS_TOKEN}
     ports:
       - "80:80"
       - "443:443"
